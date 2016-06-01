@@ -153,6 +153,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -265,6 +268,25 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <!--To Handle assembly versions through Bamboo CI Server-->
+  <PropertyGroup>
+    <Major Condition="'$(Major)'==''">1</Major>
+    <Minor Condition="'$(Minor)'==''">0</Minor>
+    <Revision Condition="'$(Revision)'==''">4</Revision>
+    <AssemblyBuild Condition="'$(AssemblyBuild)'==''">0</AssemblyBuild>
+    <AssemblyFileBuild Condition="'$(AssemblyFileBuild)'==''">0</AssemblyFileBuild>
+    <SolutionRoot>$(MSBuildProjectDirectory)\..\</SolutionRoot>
+  </PropertyGroup>
+  <ItemGroup>
+    <AssemblyInfoFiles Include="$(SolutionRoot)\CommonAssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(SolutionRoot)\MSBuildCommunitytasks\MSBuild.Community.Tasks.Targets" />
+  <Target Name="SetVersionInfo">
+    <Attrib Files="@(AssemblyInfoFiles)" Normal="true" />
+    <FileUpdate Files="@(AssemblyInfoFiles)" Regex="AssemblyVersion\(&quot;.*&quot;\)\]" ReplacementText="AssemblyVersion(&quot;$(Major).$(Minor).$(Revision).$(AssemblyBuild)&quot;)]" />
+    <FileUpdate Files="@(AssemblyInfoFiles)" Regex="AssemblyFileVersion\(&quot;.*&quot;\)\]" ReplacementText="AssemblyFileVersion(&quot;$(Major).$(Minor).$(Revision).$(AssemblyFileBuild)&quot;)]" />
+  </Target>
+  <Target Name="BeforeBuild" DependsOnTargets="SetVersionInfo" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

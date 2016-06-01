@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Run" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <SolutionRoot>$(MSBuildProjectDirectory)</SolutionRoot>
+  </PropertyGroup>
+  <Import Project="$(SolutionRoot)\MSBuildCommunitytasks\MSBuild.Community.Tasks.Targets" />
+  <Target Name="Build">
+    <MSBuild Projects="$(SolutionRoot)\PracticeMvcApplication\PracticeMvcApplication.csproj" Targets="Build" Properties="Build =$(AssemblyFileBuild)"/>
+  </Target>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <PropertyGroup>
+    <OutDir>C:\Package\BCKC\</OutDir>
+  </PropertyGroup>
+  <Target Name="Run" DependsOnTargets="Build">
+    <Message Text="Run called." />
+    <MSBuild Projects="$(SolutionRoot)\PracticeMvcApplication\PracticeMvcApplication.csproj"
+          Targets="Package"
+    Properties="_PackageTempDir=$(SolutionRoot)\Temp\Web"/>
+  </Target>
+
+  <Target Name="Zip" AfterTargets="Run">
+    <CreateItem Include="$(SolutionRoot)\Temp\Web\**\*.*" >
+      <Output ItemName="ZipFiles" TaskParameter="Include"/>
+    </CreateItem>
+    <Zip ZipFileName="$(projectname).zip" WorkingDirectory="$(SolutionRoot)\Temp\Web" Files="@(ZipFiles)" />
+  </Target>
+</Project>
