@@ -20,7 +20,6 @@ namespace PracticeMvcApplication.Controllers
 
         public AccountController()
         {
-            var
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
