@@ -20,6 +20,7 @@ namespace PracticeMvcApplication.Controllers
 
         public AccountController()
         {
+            //added comment
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
